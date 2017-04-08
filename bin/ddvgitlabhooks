@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+'use strict'
+// 标题
+process.title = 'ddvGitlabHooks'
+// 判断调试模式
+if (process.env.NODE_ENV === 'development' || process.argv.indexOf('dev') > -1) {
+  process.env.NODE_ENV = 'development'
+}
+// 文件模块
+const fs = require('fs')
+// 路径模块
+const path = require('path')
+// 导出服务器模块
+const server = require('../server')
+// 根路径
+const siteRootPath = path.resolve('.', './')
+// 尝试获取配置文件地址
+var siteConfigFile = path.resolve(siteRootPath, 'site.config.js')
+if (!fs.existsSync(siteConfigFile)) {
+  // 再次参数获取
+  siteConfigFile = path.resolve(siteRootPath, 'gitlab.hooks.config.js')
+}
+if (!fs.existsSync(siteConfigFile)) {
+  siteConfigFile = null
+}
+let configIndex = process.argv.indexOf('-c')
+configIndex = configIndex > -1 ? configIndex : process.argv.indexOf('--config')
+if (configIndex > -1) {
+  const path = process.argv.length > configIndex && process.argv[configIndex + 1] || ''
+  console.log(path)
+  if (path && fs.existsSync(siteConfigFile)) {
+    siteConfigFile = path
+  } else {
+    throw new Error('config flie not find:' + path)
+  }
+}
+// 设置站点配置文件
+server.setSiteConfigFile(siteConfigFile)

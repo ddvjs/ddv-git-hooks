@@ -1,0 +1,56 @@
+{
+  "scripts": {
+    "lint": "eslint --ext .js lib",
+    "dev": "ddvgitlabhooks dev",
+    "start": "ddvgitlabhooks start",
+    "test": "npm run lint",
+    "precommit": "npm run lint",
+    "prepublish": "npm run lint"
+  },
+  "bin": {
+    "ddvgitlabhooks": "./bin/ddvgitlabhooks"
+  },
+  "author": {
+    "name": "yuchonghua"
+  },
+  "keywords": [
+    "ddv-gitlab-hooks"
+  ],
+  "license": "ISC",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "yuchonghua",
+      "email": "yuchonghua@163.com"
+    }
+  ],
+  "name": "ddv-gitlab-hooks",
+  "bugs": {
+    "url": "https://github.com/ddvjs/ddv-gitlab-hooks/issues"
+  },
+  "homepage": "https://github.com/ddvjs/ddv-gitlab-hooks#readme",
+  "description": "ddv-gitlab-hooks",
+  "directories": {},
+  "dependencies": {
+    "ddv-worker": "~0.0.20",
+    "debug": "~2.6.0",
+    "express": "^4.15.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.0.1",
+    "eslint": "^3.14.0",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^2.0.1"
+  },
+  "optionalDependencies": {},
+  "preferGlobal": false,
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ddvjs/ddv-gitlab-hooks.git"
+  },
+  "jshintConfig": {
+    "esversion": 6
+  },
+  "version": "0.0.1"
+}
