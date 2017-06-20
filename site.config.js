@@ -1,3 +1,4 @@
+const path = require('path')
 module.exports = {
   // 项目监听
   'defaultListen': false,
@@ -9,5 +10,6 @@ module.exports = {
       'port': 80
     }
   ],
+  'repositoryDir': path.join(__dirname, './test'),
   'cpuLen': 1
 }
