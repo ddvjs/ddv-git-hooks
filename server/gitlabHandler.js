@@ -12,7 +12,12 @@ const deleteRemote = require('./deleteRemote.js')
 const handler = createHandler([ // multiple handlers
   { path: '/webhook1', secret: '2deersdasdasdadadweqaweqweqeqewddsd' },
   { path: '/webhook2', secret: 'secret2' },
-  { path: '/php', secret: 'ssssss' }
+  { path: '/php', secret: 'ssssss' },
+  { path: '/php/ci', secret: 'cccccc' },
+  { path: '/php/laravel', secret: 'llllll' },
+  { path: '/js', secret: 'jjjjjj' },
+  { path: '/js/ddv', secret: 'ddddddd' },
+  { path: '/js/nuxt', secret: 'nnnnnn' }
 ])
 
 handler.on('error', function (err) {
