@@ -1,25 +1,22 @@
 const Git = require('nodegit')
+const credentials = require('./credentials.callbacks.js')
+const certificateCheck = require('./certificateCheck.callbacks.js')
 module.exports = clone
 
-function clone (url, path) {
+function clone (url, path, branch) {
   var cloneOptions = {}
-  var credentialsAttempted = false
+  cloneOptions.checkoutBranch = branch
   cloneOptions.fetchOpts = {
     callbacks: {
-      credentials: function (url, username, allowedTypes) {
-        if (credentialsAttempted) {
-          return Git.Cred.defaultNew()
-        }
-        credentialsAttempted = true
-        return Git.Cred.userpassPlaintextNew('yuchonghua', '12345678')
-      }
+      credentials,
+      certificateCheck
     }
   }
   return Git.Clone.clone(url, path, cloneOptions)
   .then(function (repository) {
-    console.log(111111, 'clone', repository)
+    console.log('The project was cloned success')
   })
   .catch(e => {
-    console.log(33, 'clone', e)
+    console.error(`The project was cloned failed: ${e}`)
   })
 }

@@ -15,6 +15,11 @@ module.exports = function getRemoteByRemoteUrl (repositoryPath, url) {
         return Promise.reject(new RepositoryError('not find remote', 'NOT_FIND_REPOSITORY'))
       }
     })
+  }, e => {
+    if (e.errno === -3) {
+      e.errorId = 'NOT_FIND_REPOSITORY'
+    }
+    return Promise.reject(e)
   }).then(([repository, remotes]) => {
     if (!Array.isArray(remotes)) {
       return Promise.reject(new RepositoryError('not find remote', 'NOT_FIND_REMOTE'))
@@ -28,6 +33,12 @@ module.exports = function getRemoteByRemoteUrl (repositoryPath, url) {
       }
     }
     return Promise.reject(new RepositoryError('remote url error', 'REMOTE_URL_ERROR'))
+  })
+  .catch(e => {
+    if (e.message.indexOf('not find repository') > -1) {
+      e.errorId = 'NOT_FIND_REPOSITORY'
+    }
+    return Promise.reject(e)
   })
 }
 /**
