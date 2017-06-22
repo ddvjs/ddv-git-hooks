@@ -1,24 +1,15 @@
 'use strict'
 let config
 const path = require('path')
-const createHandler = require('node-gitlab-webhook')
+const bl = require('bl')
 // 创建模块
 const clone = require('./clone.js')
 const pull = require('./pull.js')
 const util = require('./util.js')
 const hooks = require('../hooks')
 const deleteRemote = require('./deleteRemote.js')
-
-const handler = createHandler([ // multiple handlers
-  { path: '/webhook1', secret: '2deersdasdasdadadweqaweqweqeqewddsd' },
-  { path: '/webhook2', secret: 'secret2' },
-  { path: '/php', secret: 'ssssss' },
-  { path: '/php/ci', secret: 'cccccc' },
-  { path: '/php/laravel', secret: 'llllll' },
-  { path: '/js', secret: 'jjjjjj' },
-  { path: '/js/ddv', secret: 'ddddddd' },
-  { path: '/js/nuxt', secret: 'nnnnnn' }
-])
+const EventEmitter = require('events').EventEmitter
+const handler = new EventEmitter()
 
 handler.on('error', function (err) {
   console.error('Error:', err.message)
@@ -75,28 +66,95 @@ handler.on('push', function (event) {
   }, e => {
     hooks(e, hooksEvent)
   })
-  switch (event.path) {
-    case '/webhook1':
-      // do sth about webhook1
-      break
-    case '/webhook2':
-      // do sth about webhook2
-      break
-    default:
-      // do sth else or nothing
-      break
-  }
 })
 function setConfig (c) {
   config = c
 }
 function gitlabHandler (req, res) {
-  handler(req, res, function (err) {
-    if (err) {
+  var currentOptions, event, events
+  var hasError = e => {
+    res.writeHead(400, { 'content-type': 'application/json' })
+    res.end(JSON.stringify({ error: e.message }))
+
+    handler.emit('error', e, req)
+  }
+  try {
+    currentOptions = findCurrentOptions(req.url)
+    if (!isObject(currentOptions)) {
+      throw new TypeError('must provide an options object')
     }
-    res.statusCode = 404
-    res.end('no such location')
+    if (typeof currentOptions.path !== 'string') { throw new TypeError('must provide a \'path\' option') }
+
+    if (typeof currentOptions.secret === 'string' || Array.isArray(currentOptions.secret)) {
+      let secret = currentOptions.secret
+      let secretInput = req.headers['x-gitlab-token']
+      if (!(secret === secretInput || (Array.isArray(secret) && secret.indexOf(secretInput) > -1))) {
+        throw new TypeError('\'secret\' error')
+      }
+    } else {
+      throw new TypeError('must provide a \'secret\' option')
+    }
+    if (req.url.split('?').shift() !== currentOptions.path) {
+      throw new TypeError('path')
+    }
+    event = req.headers['x-gitlab-event']
+    events = currentOptions.events
+    if (!event) {
+      throw new TypeError('No X-Gitlab-Event found on request')
+    }
+    if (events && events.indexOf(event) === -1) {
+      // 如果限定了events就限定
+      throw new TypeError('X-Gitlab-Event is not acceptable')
+    }
+  } catch (e) {
+    hasError(e)
+  }
+
+  req.pipe(bl((err, data) => {
+    if (err) {
+      return hasError(err)
+    }
+
+    var obj
+
+    try {
+      obj = JSON.parse(data.toString())
+    } catch (e) {
+      return hasError(e)
+    }
+
+    var event = obj.object_kind
+
+    res.writeHead(200, { 'content-type': 'application/json' })
+    res.end('{"ok":true}')
+
+    var emitData = {
+      event: event,
+      payload: obj,
+      protocol: req.protocol,
+      host: req.headers['host'],
+      url: req.url,
+      path: currentOptions.path,
+      currentOptions: currentOptions
+    }
+
+    handler.emit(event, emitData)
+    handler.emit('*', emitData)
+  }))
+}
+function findCurrentOptions (url) {
+  var paths = Object.keys(config.paths)
+  var ret = Object.create(null)
+  paths.forEach(path => {
+    if (url.split('?').shift() === path) {
+      ret.path = path
+      ret = Object.assign(ret, config.paths[path])
+    }
   })
+  return ret
+}
+function isObject (obj) {
+  return Object.prototype.toString.apply(obj) === '[object Object]'
 }
 // 导出模块
 module.exports = Object.assign(gitlabHandler, {setConfig})

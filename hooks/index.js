@@ -3,12 +3,17 @@ const hooksFn = Object.create(null)
 module.exports = hooks
 const path = require('path')
 
-function hooks (type, event) {
-  loadHooksFn(type, event.config)
+function hooks (err, event) {
+  if (err) {
+    console.error('运行失败', err)
+    return
+  }
+  var type = event.type
+  loadHooksFn(event.event.path, event.config)
   .then(fn => {
     fn(event)
   })
-  .catch(e => console.error('运行失败', e))
+  .catch(e => console.error('HooksFn运行失败', e))
 }
 function loadHooksFn (type, config) {
   if (hooksFn[type]) {
@@ -32,7 +37,7 @@ function loadHooksFn (type, config) {
   .catch(e => {
     return new Promise(function (resolve, reject) {
       try {
-        hooksFn[type] = require(type)
+        hooksFn[type] = require(path.join(__dirname, type))
         resolve(hooksFn[type])
       } catch (e) {
         reject(e)

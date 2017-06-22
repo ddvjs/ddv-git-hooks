@@ -4,8 +4,10 @@ const glob = require('glob')
 const fs = require('fs')
 const mustache = require('mustache')
 const pathSep = require('path').sep
+const pathJoin = require('path').join
 const exec = require('child_process').exec
 const pathReg = /(.*)\/.git\//
+const confStringify = JSON.stringify
 const patterns = [
   '/*/*/branch/*/.git/',
   '/*/*/master/.git/',
@@ -13,17 +15,17 @@ const patterns = [
 ]
 // 默认用这个模板
 const confTemplate = `{{#lists}}
-<VirtualHost *:{{port}}>
-  ServerName {{ServerName}}
-  ServerAdmin {{ServerAdmin}}
-  DocumentRoot {{DocumentRoot}}
+<VirtualHost *:{{{port}}}>
+  ServerName {{{ServerName}}}
+  ServerAdmin {{{ServerAdmin}}}
+  DocumentRoot {{{DocumentRoot}}}
 
-  ErrorLog {{ErrorLog}}
-  CustomLog {{CustomLog}} combined
+  ErrorLog {{{ErrorLog}}}
+  CustomLog {{{CustomLog}}} combined
 
 
-  DirectoryIndex {{DirectoryIndex}}
-  <Directory {{Directory}}>
+  DirectoryIndex {{{DirectoryIndex}}}
+  <Directory {{{Directory}}}>
             Options -Indexes +FollowSymlinks
             AllowOverride All
             Require all granted
@@ -34,29 +36,32 @@ const confTemplate = `{{#lists}}
 function hooks (event) {
   var config = event.config
   var repositoryDir = config.repositoryDir
+  var currentOptions = event.event.currentOptions
   getPath(repositoryDir)
   .then(lists => {
     var res = []
     lists.forEach(line => {
       res.push({
         port: 80,
-        ServerName: `${line.name}.${config.phpci.domain}`,
-        ServerAdmin: `${config.phpci.serverAdmin || 'webmaster@localhost'}`,
-        DocumentRoot: line.path,
-        Directory: line.path,
-        ErrorLog: `${config.phpci.rootLog}/${line.name}.error.log`,
-        CustomLog: `${config.phpci.rootLog}/${line.name}.access.log`,
-        DirectoryIndex: `${config.phpcli.DirectoryIndex || 'index.html index.php'}`
+        ServerName: confStringify(`${line.name}.${currentOptions.domain}`),
+        ServerAdmin: confStringify(`${currentOptions.serverAdmin || 'webmaster@localhost'}`),
+        DocumentRoot: confStringify(line.path),
+        Directory: confStringify(line.path),
+        ErrorLog: confStringify(pathJoin(currentOptions.rootLog, `${line.name}.error.log`)),
+        CustomLog: confStringify(pathJoin(currentOptions.rootLog, `${line.name}.access.log`)),
+        DirectoryIndex: confStringify(`${currentOptions.DirectoryIndex || 'index.html index.php'}`)
       })
     })
     return res
   })
   .then(lists => {
     var output = mustache.render((config.confTemplate || confTemplate), {lists})
-    fs.writeFile(config.phpci.confFile, output)
+    return new Promise(function (resolve, reject) {
+      fs.writeFile(currentOptions.confFile, output, err => err ? reject(err) : resolve())
+    })
   })
   .then(() => {
-    var cmd = config.phpci.reloadCmd || 'service apache2 reload'
+    var cmd = currentOptions.reloadCmd || 'service apache2 reload'
     exec(cmd)
   })
 }
