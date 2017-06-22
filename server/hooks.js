@@ -9,7 +9,7 @@ module.exports = hooks
 function hooks (type, event) {
   console.log(repositoryDir)
   console.log(event.event.payload.path)
-  return Promise.all([getMasterItem, getBranchItem, getPrItem])
+  return Promise.all([getMasterItem(), getBranchItem(), getPrItem()])
   .then(res => {
     console.log(res)
   })
