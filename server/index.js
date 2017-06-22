@@ -43,6 +43,7 @@ worker.start = config => {
   isStart = true
   // 配置信息
   config = config || require(siteConfigFile)
+  gitlabHandler.setConfig(config)
   // 监听服务 - Listen the server
   worker.updateServerConf({
     defaultListen: config.defaultListen,

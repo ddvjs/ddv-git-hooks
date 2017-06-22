@@ -1,6 +1,6 @@
 'use strict'
+let config
 const path = require('path')
-const config = require('../site.config.js')
 const createHandler = require('node-gitlab-webhook')
 // 创建模块
 const clone = require('./clone.js')
@@ -26,6 +26,7 @@ handler.on('error', function (err) {
 
 handler.on('push', function (event) {
   var hooksEvent = Object.create(null)
+  hooksEvent.config = config
   hooksEvent.event = event
   hooksEvent.type = 'unknow'
   let info = event.payload
@@ -86,8 +87,10 @@ handler.on('push', function (event) {
       break
   }
 })
-// 导出模块
-module.exports = (req, res) => {
+function setConfig (c) {
+  config = c
+}
+function gitlabHandler (req, res) {
   handler(req, res, function (err) {
     if (err) {
     }
@@ -95,3 +98,5 @@ module.exports = (req, res) => {
     res.end('no such location')
   })
 }
+// 导出模块
+module.exports = Object.assign(gitlabHandler, {setConfig})
