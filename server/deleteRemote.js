@@ -2,11 +2,13 @@
 const fs = require('fs')
 const getRemoteByRemoteUrl = require('./getRemoteByRemoteUrl.js')
 module.exports = function deleteRemote (url, path) {
+  // 检查是否存在当前分支
   return getRemoteByRemoteUrl(path, url)
   .then(([repository, remote]) => {
+    // 递归删除文件夹
     return deleteFolderRecursive(path)
     .then(() => {
-      console.log('Branch deleted successfully')
+      console.log('Branch deleted success')
     })
     .catch(() => {
       let pathArray = path.split('/')
