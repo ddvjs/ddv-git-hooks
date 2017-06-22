@@ -33,6 +33,7 @@
   "description": "ddv-gitlab-hooks",
   "directories": {},
   "dependencies": {
+    "bl": "~1.2.1",
     "ddv-worker": "~0.0.20",
     "debug": "~2.6.0",
     "glob": "~7.1.2",
