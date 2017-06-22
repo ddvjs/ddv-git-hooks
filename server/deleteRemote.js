@@ -16,9 +16,6 @@ module.exports = function deleteRemote (url, path) {
     })
   })
 }
-// '/*/*/branch/*/.git/'
-// '/*/*/master/.git/'
-// '/*/*/pr/*/.git/'
 
 function deleteFolderRecursive (path) {
   return new Promise(function (resolve, reject) {
