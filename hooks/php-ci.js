@@ -4,6 +4,7 @@ const glob = require('glob')
 const fs = require('fs')
 const mustache = require('mustache')
 const pathSep = require('path').sep
+const exec = require('child_process').exec
 const pathReg = /(.*)\/.git\//
 const patterns = [
   '/*/*/branch/*/.git/',
@@ -52,11 +53,11 @@ function hooks (event) {
   })
   .then(lists => {
     var output = mustache.render((config.confTemplate || confTemplate), {lists})
-    fs.wir(config.phpci.confFile, output)
+    fs.writeFile(config.phpci.confFile, output)
   })
   .then(() => {
     var cmd = config.phpci.reloadCmd || 'service apache2 reload'
-    //exec(cmd)
+    exec(cmd)
   })
 }
 
