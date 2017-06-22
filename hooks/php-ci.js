@@ -54,6 +54,10 @@ function hooks (event) {
     var output = mustache.render((config.confTemplate || confTemplate), {lists})
     fs.wir(config.phpci.confFile, output)
   })
+  .then(() => {
+    var cmd = config.phpci.reloadCmd || 'service apache2 reload'
+    //exec(cmd)
+  })
 }
 
 function getPath (root) {
