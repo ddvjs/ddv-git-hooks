@@ -110,6 +110,7 @@ function gitlabHandler (req, res) {
     }
   } catch (e) {
     hasError(e)
+    return
   }
 
   req.pipe(bl((err, data) => {
