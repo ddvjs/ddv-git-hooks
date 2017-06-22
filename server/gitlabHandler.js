@@ -10,6 +10,7 @@ const hooks = require('../hooks')
 const deleteRemote = require('./deleteRemote.js')
 const EventEmitter = require('events').EventEmitter
 const handler = new EventEmitter()
+const credentials = require('./credentials.callbacks.js')
 
 handler.on('error', function (err) {
   console.error('Error:', err.message)
@@ -69,6 +70,7 @@ handler.on('push', function (event) {
 })
 function setConfig (c) {
   config = c
+  credentials.setConfig(c)
 }
 function gitlabHandler (req, res) {
   var currentOptions, event, events
