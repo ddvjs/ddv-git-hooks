@@ -45,8 +45,8 @@ function hooks (event) {
         port: 80,
         ServerName: confStringify(`${line.name}.${currentOptions.domain}`),
         ServerAdmin: confStringify(`${currentOptions.serverAdmin || 'webmaster@localhost'}`),
-        DocumentRoot: confStringify(line.path),
-        Directory: confStringify(line.path),
+        DocumentRoot: confStringify(pathJoin(line.path, 'public')),
+        Directory: confStringify(pathJoin(line.path, 'public')),
         ErrorLog: confStringify(pathJoin(currentOptions.rootLog, `${line.name}.error.log`)),
         CustomLog: confStringify(pathJoin(currentOptions.rootLog, `${line.name}.access.log`)),
         DirectoryIndex: confStringify(`${currentOptions.DirectoryIndex || 'index.html index.php'}`)
@@ -61,8 +61,14 @@ function hooks (event) {
     })
   })
   .then(() => {
-    var cmd = currentOptions.reloadCmd || 'service apache2 reload'
-    exec(cmd)
+    return new Promise(function (resolve, reject) {
+      var cmd = currentOptions.reloadCmd || 'service apache2 reload'
+      exec(cmd, (err, stdout, stderr) => {
+        console.log(`stdout: ${stdout}`)
+        console.error(`stderr: ${stderr}`)
+        err ? reject(err) : resolve()
+      })
+    })
   })
 }
 

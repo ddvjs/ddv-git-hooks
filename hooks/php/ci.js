@@ -61,8 +61,14 @@ function hooks (event) {
     })
   })
   .then(() => {
-    var cmd = currentOptions.reloadCmd || 'service apache2 reload'
-    exec(cmd)
+    return new Promise(function (resolve, reject) {
+      var cmd = currentOptions.reloadCmd || 'service apache2 reload'
+      exec(cmd, (err, stdout, stderr) => {
+        console.log(`stdout: ${stdout}`)
+        console.error(`stderr: ${stderr}`)
+        err ? reject(err) : resolve()
+      })
+    })
   })
 }
 
