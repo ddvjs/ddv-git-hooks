@@ -6,7 +6,7 @@ const createHandler = require('node-gitlab-webhook')
 const clone = require('./clone.js')
 const pull = require('./pull.js')
 const util = require('./util.js')
-const hooks = require('./hooks.js')
+const hooks = require('../hooks')
 const deleteRemote = require('./deleteRemote.js')
 
 const handler = createHandler([ // multiple handlers
