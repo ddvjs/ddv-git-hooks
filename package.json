@@ -10,9 +10,6 @@
   "bin": {
     "ddvgitlabhooks": "./bin/ddvgitlabhooks"
   },
-  "author": {
-    "name": "yuchonghua"
-  },
   "keywords": [
     "ddv-gitlab-hooks"
   ],
@@ -22,6 +19,10 @@
     {
       "name": "yuchonghua",
       "email": "yuchonghua@163.com"
+    },
+    {
+      "name": "HadiChan",
+      "email": "861883474@qq.com"
     }
   ],
   "name": "ddv-gitlab-hooks",
