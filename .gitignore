@@ -43,3 +43,7 @@ jspm_packages
 .git
 
 yarn.lock
+
+test/*
+
+package-lock.json
