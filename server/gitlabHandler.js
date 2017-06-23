@@ -10,6 +10,7 @@ const hooks = require('../hooks')
 const deleteRemote = require('./deleteRemote.js')
 const EventEmitter = require('events').EventEmitter
 const handler = new EventEmitter()
+const execImplement = require('./execImplement.js')
 const credentials = require('./credentials.callbacks.js')
 
 handler.on('error', function (err) {
@@ -48,6 +49,13 @@ handler.on('push', function (event) {
       hooksEvent.type = 'pull'
       hooksEvent.res = res
       console.log('update completed')
+      return execImplement(repositoryPath, 'pull')
+      .then(() => {
+        console.log('command execution success')
+      })
+      .catch(e => {
+        console.log(e)
+      })
     }, e => {
         // 如果是没有这个库
       if (e.errorId === 'NOT_FIND_REPOSITORY') {
@@ -56,6 +64,15 @@ handler.on('push', function (event) {
         .then(res => {
           hooksEvent.type = 'clone'
           hooksEvent.res = res
+        })
+        .then(() => {
+          return execImplement(path, 'clone')
+          .then(() => {
+            console.log('command execution success')
+          })
+          .catch(e => {
+            console.log(e)
+          })
         })
       }
       // 否则继续抛出上层错误
