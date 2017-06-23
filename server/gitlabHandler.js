@@ -66,7 +66,7 @@ handler.on('push', function (event) {
           hooksEvent.res = res
         })
         .then(() => {
-          return execImplement(path, 'clone')
+          return execImplement(repositoryPath, 'clone')
           .then(() => {
             console.log('command execution success')
           })
