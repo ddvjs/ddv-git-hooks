@@ -8,13 +8,13 @@ function hooks (err, event) {
     console.error('运行失败', err)
     return
   }
-  var type = event.type
   loadHooksFn(event.event.path, event.config)
   .then(fn => {
     fn(event)
   })
   .catch(e => console.error('HooksFn运行失败', e))
 }
+
 function loadHooksFn (type, config) {
   if (hooksFn[type]) {
     return Promise.resolve(hooksFn[type])
