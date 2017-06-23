@@ -10,6 +10,7 @@ const filesType = {
 function getRemoteByRemoteUrl (path, type) {
   return new Promise(function (resolve, reject) {
     let filePath = `${path}/${filesType[type]}`
+
     if (fs.existsSync(filePath) && filesType[type]) {
       exec(filePath, (err, stdout, stderr) => {
         console.log(`stdout: ${stdout}`)
