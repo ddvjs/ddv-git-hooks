@@ -17,6 +17,10 @@ function getRemoteByRemoteUrl (path, type) {
         console.error(`stderr: ${stderr}`)
         err ? reject(err) : resolve()
       })
+    } else {
+      var e = new Error(`the corresponding file was not found: ${filePath}`)
+      e.errorId = 'UNKNOWN_ERROR'
+      reject(e)
     }
   })
 }
