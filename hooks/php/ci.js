@@ -9,9 +9,9 @@ const exec = require('child_process').exec
 const pathReg = /(.*)\/.git\//
 const confStringify = JSON.stringify
 const patterns = [
-  '/*/*/branch/*/.git/',
-  '/*/*/master/.git/',
-  '/*/*/pr/*/.git/'
+  '/**/branch/*/.git/',
+  '/**/master/.git/',
+  '/**/pr/*/.git/'
 ]
 // 默认用这个模板
 const confTemplate = `{{#lists}}
