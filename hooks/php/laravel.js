@@ -26,7 +26,7 @@ const confTemplate = `{{#lists}}
 
   DirectoryIndex {{{DirectoryIndex}}}
   <Directory {{{Directory}}}>
-            Options -Indexes +FollowSymlinks
+            Options Indexes FollowSymLinks MultiViews
             AllowOverride All
             Require all granted
   </Directory>
