@@ -30,7 +30,7 @@ handler.on('push', function (event) {
   let branch = ref.split('/').slice(-1)[0]
   let branchDir = branch === 'master' ? branch : `branch/${branch}`
   // 获取存储地址、项目组、项目名称
-  let repositoryPath = path.join(config.repositoryDir, info.project.namespace, event.payload.project.name, branchDir)
+  let repositoryPath = path.join(config.repositoryDir, (info.path_with_namespace || info.project.namespace + '/' + event.payload.project.name), branchDir)
   // git地址
   let url = event.payload.repository.git_http_url
   // 获取最新的提交id
