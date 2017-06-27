@@ -24,13 +24,13 @@ handler.on('push', function (event) {
   hooksEvent.type = 'unknow'
   let info = event.payload
   // 判断是否删除分支
-  let isDel = (parseInt(info.after) === 0)
+  let isDel = (info.after === '00000000000000000000000000000000')
   let ref = info.ref
   // 获取当前分支
   let branch = ref.split('/').slice(-1)[0]
   let branchDir = branch === 'master' ? branch : `branch/${branch}`
   // 获取存储地址、项目组、项目名称
-  let repositoryPath = path.join(config.repositoryDir, (info.path_with_namespace || info.project.namespace + '/' + event.payload.project.name), branchDir)
+  let repositoryPath = path.join(config.repositoryDir, (info.project.path_with_namespace || info.project.namespace + '/' + event.payload.project.name), branchDir)
   // git地址
   let url = event.payload.repository.git_http_url
   // 获取最新的提交id
