@@ -49,7 +49,7 @@ function hooks (event) {
         Directory: confStringify(pathJoin(line.path, 'public')),
         ErrorLog: confStringify(pathJoin(currentOptions.rootLog, `${line.name}.error.log`)),
         CustomLog: confStringify(pathJoin(currentOptions.rootLog, `${line.name}.access.log`)),
-        DirectoryIndex: confStringify(`${currentOptions.DirectoryIndex || 'index.html index.php'}`)
+        DirectoryIndex: (`${currentOptions.DirectoryIndex || 'index.html index.php'}`)
       })
     })
     return res
